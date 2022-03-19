@@ -1,23 +1,108 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import movieApi from '../../Api/MovieApi';
+import { API_KEY } from '../../Api/MovieApiKey';
 
+
+interface IRating {
+    Source: string;
+    Value: string;
+}
+
+export interface IMovieOrShow {
+    Title: string;
+    Year: string;
+    Rated: string;
+    Released: string;
+    Runtime: string;
+    Genre: string;
+    Director: string;
+    Writer: string;
+    Actors: string;
+    Plot: string;
+    Language: string;
+    Country: string;
+    Awards: string;
+    Poster: string;
+    Ratings: IRating[];
+    Metascore: string;
+    imdbRating: string;
+    imdbVotes: string;
+    imdbID: string;
+    Type: string;
+    DVD: string;
+    BoxOffice: string;
+    Production: string;
+    Website: string;
+    Response: string;
+}
 export interface MoviesState {
     movies: Record<string, never>
+    shows: Record<string, never>
+    selectedMovieOrShow: Record<string, never>
 }
 
 const initialState: MoviesState = {
-    movies: {}
+    movies: {},
+    shows: {},
+    selectedMovieOrShow: {},
 };
+
+export const fetchAsyncMovies = createAsyncThunk('movies/fetchAsyncMovies',
+    async () => {
+        const movieText = 'matrix';
+        const response = await movieApi.get(`?apikey=${API_KEY}&s=${movieText}&type=movie`);
+        return response.data;
+    }
+);
+
+export const fetchAsyncShows = createAsyncThunk('shows/fetchAsyncShows',
+    async () => {
+        const seriesText = 'Friends';
+        const response = await movieApi.get(`?apikey=${API_KEY}&s=${seriesText}&type=series`);
+        return response.data;
+    }
+);
+
+export const fetchAsyncMovieOrShowDetail = createAsyncThunk('movies/fetchAsyncMovieOrShowDetail',
+    async (imdbID) => {
+        const response = await movieApi.get(`?apikey=${API_KEY}&i=${imdbID}$Plot=full`);
+        return response.data;
+    }
+);
 
 
 export const moviesSlice = createSlice({
     name: 'movies',
     initialState,
     reducers: {
-        addMovies: (state, action) => {
-            state.movies = action.payload;
+        addMoviesOrSeries: (state, action) => {
+            state.selectedMovieOrShow = action.payload;
         }
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(fetchAsyncMovies.pending, () => {
+            console.log('Pending');
+        }),
+            builder.addCase(fetchAsyncMovies.fulfilled, (state, action) => {
+                state.movies = action.payload;
+            }),
+            builder.addCase(fetchAsyncMovies.rejected, () => {
+                console.log('Error');
+            }),
+            builder.addCase(fetchAsyncShows.pending, () => {
+                console.log('Pending');
+            }),
+            builder.addCase(fetchAsyncShows.fulfilled, (state, action) => {
+                state.shows = action.payload;
+            }),
+            builder.addCase(fetchAsyncShows.rejected, () => {
+                console.log('Error');
+            }),
+            builder.addCase(fetchAsyncMovieOrShowDetail.fulfilled, (state, action) => {
+                state.selectedMovieOrShow = action.payload;
+            });
+    },
 });
 
-export const { addMovies } = moviesSlice.actions;
+export const { addMoviesOrSeries } = moviesSlice.actions;
 export default moviesSlice.reducer;
