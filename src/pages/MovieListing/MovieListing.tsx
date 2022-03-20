@@ -4,11 +4,14 @@ import { useSelector } from 'react-redux';
 import { MovieCard } from '../MovieCard/MovieCard';
 import { IMovie } from '../MovieCard/MovieCard';
 import './MovieListing.scss';
+import ReactLoading from 'react-loading';
 
 
 export const MovieListing: FC = () => {
     const movies: any = useSelector((state: RootState) => state.movie.movies);
     const shows: any = useSelector((state: RootState) => state.movie.shows);
+
+
 
     let renderMovies = '';
     let renderShows = '';

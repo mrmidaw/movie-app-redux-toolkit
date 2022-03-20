@@ -36,12 +36,14 @@ export interface IMovieOrShow {
     Response: string;
 }
 export interface MoviesState {
+    loading: boolean
     movies: Record<string, never>
     shows: Record<string, never>
     selectedMovieOrShow: Record<string, never>
 }
 
 const initialState: MoviesState = {
+    loading: false,
     movies: {},
     shows: {},
     selectedMovieOrShow: {},
@@ -77,26 +79,31 @@ export const moviesSlice = createSlice({
     reducers: {
         addMoviesOrSeries: (state, action) => {
             state.selectedMovieOrShow = action.payload;
+        },
+        removeSelectedMovieOrShow: (state) => {
+            state.selectedMovieOrShow = {};
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchAsyncMovies.pending, () => {
-            console.log('Pending');
+        builder.addCase(fetchAsyncMovies.pending, (state) => {
+            state.loading = true;
         }),
-            builder.addCase(fetchAsyncMovies.fulfilled, (state, action) => {
-                state.movies = action.payload;
-            }),
             builder.addCase(fetchAsyncMovies.rejected, () => {
                 console.log('Error');
             }),
-            builder.addCase(fetchAsyncShows.pending, () => {
-                console.log('Pending');
+            builder.addCase(fetchAsyncMovies.fulfilled, (state, action) => {
+                state.loading = false;
+                state.movies = action.payload;
             }),
-            builder.addCase(fetchAsyncShows.fulfilled, (state, action) => {
-                state.shows = action.payload;
+            builder.addCase(fetchAsyncShows.pending, (state) => {
+                state.loading = true;
             }),
             builder.addCase(fetchAsyncShows.rejected, () => {
                 console.log('Error');
+            }),
+            builder.addCase(fetchAsyncShows.fulfilled, (state, action) => {
+                state.loading = false;
+                state.shows = action.payload;
             }),
             builder.addCase(fetchAsyncMovieOrShowDetail.fulfilled, (state, action) => {
                 state.selectedMovieOrShow = action.payload;
@@ -104,5 +111,5 @@ export const moviesSlice = createSlice({
     },
 });
 
-export const { addMoviesOrSeries } = moviesSlice.actions;
+export const { addMoviesOrSeries, removeSelectedMovieOrShow } = moviesSlice.actions;
 export default moviesSlice.reducer;

@@ -1,17 +1,15 @@
 import React, { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { addMoviesOrSeries, IMovieOrShow } from '../../features/movies/moviesSlice';
-
+import { addMoviesOrSeries, removeSelectedMovieOrShow } from '../../features/movies/moviesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { API_KEY } from '../../Api/MovieApiKey';
 import { RootState } from '../../store';
-
+import './MovieDetail.scss';
 
 
 export const MovieDetail: FC = () => {
     const movieOrShow = useSelector((state: RootState) => state.movie.selectedMovieOrShow);
-    console.log('movieOrShow>>>', movieOrShow);
 
     const imdbId = useParams();
     const id = imdbId.imbID;
@@ -24,13 +22,62 @@ export const MovieDetail: FC = () => {
             const data = await response.data;
             dispatch(addMoviesOrSeries(data));
         };
-
-
         fetchAsyncMovieOrShowDetail(id);
-    }, [dispatch]);
 
+        // Clear selected item
+        return (() => {
+            dispatch(removeSelectedMovieOrShow());
+        });
+    }, [dispatch, id]);
 
     return (
-        <div>{movieOrShow.Title}</div>
+        <div className='movie-section'>
+            <>
+                <div className='section-left'>
+                    <div className='movie-title'>{movieOrShow.Title}</div>
+                    <div className='movie-rating'>
+                        <span>
+                            IMDB Rating <i className='fa fa-star'></i> : {movieOrShow.imdbRating}
+                        </span>
+                        <span>
+                            IMDB Votes <i className='fa fa-thumbs-up'></i> : {movieOrShow.imdbVotes}
+                        </span>
+                        <span>
+                            RunTime <i className='fa fa-film'></i> : {movieOrShow.Runtime}
+                        </span>
+                        <span>
+                            Year <i className='fa fa-calendar'></i> : {movieOrShow.Year}
+                        </span>
+                    </div>
+                    <div className='movie-plot'>{movieOrShow.Plot}</div>
+                    <div className='movie-info'>
+                        <div>
+                            <span>Director</span>
+                            <span>{movieOrShow.Director}</span>
+                        </div>
+                        <div>
+                            <span>Stars</span>
+                            <span>{movieOrShow.Actors}</span>
+                        </div>
+                        <div>
+                            <span>Genres</span>
+                            <span>{movieOrShow.Genre}</span>
+                        </div>
+                        <div>
+                            <span>Languages</span>
+                            <span>{movieOrShow.Language}</span>
+                        </div>
+                        <div>
+                            <span>Awards</span>
+                            <span>{movieOrShow.Awards}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='section-right'>
+                    <img src={movieOrShow.Poster} alt={movieOrShow.Title} />
+                </div>
+            </>
+        </div>
     );
 };
