@@ -4,14 +4,13 @@ import { useSelector } from 'react-redux';
 import { MovieCard } from '../MovieCard/MovieCard';
 import { IMovie } from '../MovieCard/MovieCard';
 import './MovieListing.scss';
-import ReactLoading from 'react-loading';
+import Slider from "react-slick";
+import { sliderSettings } from '../../common/sliderSettings';
 
 
 export const MovieListing: FC = () => {
     const movies: any = useSelector((state: RootState) => state.movie.movies);
     const shows: any = useSelector((state: RootState) => state.movie.shows);
-
-
 
     let renderMovies = '';
     let renderShows = '';
@@ -42,12 +41,16 @@ export const MovieListing: FC = () => {
         <div className="movie-wrapper">
             <div className="movie-list">
                 <h2>Movies</h2>
-                <div className="movie-container">{renderMovies}</div>
+                <div className="movie-container">
+                    <Slider {...sliderSettings}>{renderMovies}</Slider>
+                </div>
             </div>
 
             <div className="shows-list">
                 <h2>Shows</h2>
-                <div className="movie-container">{renderShows}</div>
+                <div className="movie-container">
+                <Slider {...sliderSettings}>{renderShows}</Slider>
+                </div>
             </div>
         </div>
     );

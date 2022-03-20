@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import ReactLoading from 'react-loading';
 
-export const Home = () => {
+export const Home: FC = () => {
     const loading: boolean = useSelector((state: RootState) => state.movie.loading);
     const dispatch = useDispatch();
+    const movieText = 'Harry';
+    const showText = 'Friends';
+
 
     useEffect(() => {
-        dispatch(fetchAsyncMovies());
-        dispatch(fetchAsyncShows());
+        dispatch(fetchAsyncMovies(movieText));
+        dispatch(fetchAsyncShows(showText));
     }, [dispatch]);
 
     return (

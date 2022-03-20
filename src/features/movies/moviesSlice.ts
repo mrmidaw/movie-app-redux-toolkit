@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import movieApi from '../../Api/MovieApi';
-import { API_KEY } from '../../Api/MovieApiKey';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import movieApi from '../../api/MovieApi';
+import { API_KEY } from '../../api/MovieApiKey';
 
 
 interface IRating {
@@ -50,17 +50,15 @@ const initialState: MoviesState = {
 };
 
 export const fetchAsyncMovies = createAsyncThunk('movies/fetchAsyncMovies',
-    async () => {
-        const movieText = 'matrix';
-        const response = await movieApi.get(`?apikey=${API_KEY}&s=${movieText}&type=movie`);
+    async (term: string) => {
+        const response = await movieApi.get(`?apikey=${API_KEY}&s=${term}&type=movie`);
         return response.data;
     }
 );
 
 export const fetchAsyncShows = createAsyncThunk('shows/fetchAsyncShows',
-    async () => {
-        const seriesText = 'Friends';
-        const response = await movieApi.get(`?apikey=${API_KEY}&s=${seriesText}&type=series`);
+    async (term: string) => {
+        const response = await movieApi.get(`?apikey=${API_KEY}&s=${term}&type=series`);
         return response.data;
     }
 );
@@ -77,7 +75,7 @@ export const moviesSlice = createSlice({
     name: 'movies',
     initialState,
     reducers: {
-        addMoviesOrSeries: (state, action) => {
+        addMoviesOrSeries: (state, action: PayloadAction<Record<string, never>>) => {
             state.selectedMovieOrShow = action.payload;
         },
         removeSelectedMovieOrShow: (state) => {
