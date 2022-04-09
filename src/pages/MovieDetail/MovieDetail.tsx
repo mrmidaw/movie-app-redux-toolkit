@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { addMoviesOrSeries, removeSelectedMovieOrShow } from '../../features/movies/moviesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { API_KEY } from '../../api/MovieApiKey';
+import { API_KEY } from '../../Api/MovieApiKey';
 import { RootState } from '../../store';
 import './MovieDetail.scss';
 

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import movieApi from '../../api/MovieApi';
-import { API_KEY } from '../../api/MovieApiKey';
+import movieApi from '../../Api/MovieApi';
+import { API_KEY } from '../../Api/MovieApiKey';
 
 
 interface IRating {
